@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="font\fontawesome\fontawesome-free-5.15.3-web\css\all.min.css">
+    <link rel="stylesheet" href="css/laptop.css">
+    <link rel="stylesheet" href="css/dienthoai.css">
+    <link rel="stylesheet" href="css/table.css">
+    <link rel="stylesheet" href="css/load.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>  
+    <link rel="stylesheet" href="jquery-ui.css">
+    <script src="jquery-ui.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+<style>
+    .tieude{
+        margin: auto 0;
+        text-align: center;
+        font-size: 24;
+       background-color: coral;
+    }
+    .search{
+        display: inline-block;
+    }
+    span{
+        font-size: 24;
+    }
+    .tieude p{
+        display: inline-block;
+        font-size: 36px;
+       margin-bottom: 0px;
+    }
+    .img-responsive{
+        width: 100% !important;
+        height: 300px !important;
+    }
+    .row{
+        padding-top: 20px !important;
+    }
+    .link a{
+        text-decoration: underline;
+        font-size: 20px;
+        color: blue;
+    }
+    .link{
+        padding-bottom: 20px;
+    }
+    .tomtat p{
+        font-size: 13px;
+    }
+    .modals{
+        position: relative;
+        display: block !important;
+    }
+    /* .inputkeyword{
+        display: inline;
+    } */
+
+</style>
+
+
+   
+
+
+<script>
+    $(document).ready(function(){
+        $(".load").addClass("lds-ring");
+        fetch('https://gnews.io/api/v4/top-headlines?&token=aceb190d07a75f4bbe67a04abe51e7ac')
+       
+    .then(function (response) {
+        return response.json();
+    }) 
+    .then(function (data) {
+      
+    //  for(var i=0; i<4; i++){
+    //     $("div.image img").eq(i).attr("src",data.articles[i].image)
+    // }
+  
+    // gsap.from($('#container-content'),1,{top:100,opacity:0});
+   
+    var parElenment1=$("<div></div>").attr('id','container-content');
+        for(let i=0; i< 10; i++){
+            var noidungkhoi= ` <div class="row">
+                            <div class="image col-md-4" id="hoa">
+                                    <img class="img-responsive" src="${data.articles[i].image}" alt="">
+                            </div>
+                            <div class="content col-md-8">
+                                    <div class="link">
+                                        <a href="${data.articles[i].url}" target="_blank" ><h3>${data.articles[i].title}</h3></a>
+                                    </div>
+                                    <div class="date">
+                                        <p style="font-style: oblique;">${data.articles[i].publishedAt}</p>
+                                    </div>
+                                    <div class="tomtat">
+                                        <p>${data.articles[i].description+"..."}</p>
+                                    </div>
+
+                            </div>
+                     </div>`;
+          var newElement=  $("<div></div>").html(noidungkhoi);
+        
+          parElenment1.append(newElement);
+         
+        }
+      
+       
+        $("#container").append(parElenment1);
+        $(".load").removeClass("lds-ring");
+    });
+    })
+    
+
+
+    $(document).ready(function(){
+       
+        $("#timkiem").click(function(){           
+           
+            $("#container-content").remove();
+            //Lấy dữ liệu từ input
+            //---------------------------------------------------
+            $(".load").addClass("lds-ring");
+            let start= $("#startdate").val()+"";
+            let arrStart =  start.split("-");
+                let temp=arrStart[2];
+                arrStart[2]=arrStart[0];
+                arrStart[0]=temp;
+            start=arrStart.join("-")+"T00:00:00Z";
+
+
+            let end=  $("#enddate").val()+"";
+            let arrEnd =  end.split("-");
+                 temp=arrEnd[2];
+                arrEnd[2]=arrEnd[0];
+                arrEnd[0]=temp;
+            end=arrEnd.join("-")+"T23:59:59Z";
+            let keyword=$("#timkeyword").val();
+            $("#timkeyword").val("");
+            $("#enddate").val("");
+            $("#startdate").val("");
+            //-------------------------------------------------
+            let parElenment2=$("<div></div>").attr('id','container-content');
+            console.log($("#timkeyword").val()+start+end);
+            var url= "https://gnews.io/api/v4/search?q="+ keyword +"&from="+start+"&to="+end+"&token=aceb190d07a75f4bbe67a04abe51e7ac";
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (data) {
+       
+                    console.log(data);
+                     
+            
+            for(var i=0; i<10; i++){
+                if(i!=0&&data.articles[i].title==data.articles[i-1].title){
+                    break;
+                }
+                var noidungkhoi= ` <div class="row">
+                            <div class="image col-md-4" id="hoa">
+                                    <img class="img-responsive" src="${data.articles[i].image}" alt="">
+                            </div>
+                            <div class="content col-md-8">
+                                    <div class="link">
+                                        <a href="${data.articles[i].url}" target="_blank" ><h3>${data.articles[i].title}</h3></a>
+                                    </div>
+                                    <div class="date">
+                                        <p style="font-style: oblique;">${data.articles[i].publishedAt}</p>
+                                    </div>
+                                    <div class="tomtat">
+                                        <p>${data.articles[i].description+"..."}</p>
+                                    </div>
+
+                            </div>
+                     </div>`;
+          var newElement=  $("<div></div>").html(noidungkhoi);
+        
+          parElenment2.append(newElement);
+
+
+
+                // $("div.image img").eq(i).attr("src",data.articles[i].image)
+                // $(".link a").eq(i).children("h3").text(data.articles[i].title);
+                // $(".link a").eq(i).attr("href",data.articles[i].url);
+                // $(".tomtat").eq(i).children("p").text(data.articles[i].description+"...");
+                // $(".date").eq(i).children("p").text(data.articles[i].publishedAt);
+                
+            }
+            $("#container").append(parElenment2);   
+            $(".load").removeClass("lds-ring");
+            
+            });
+
+        //   return false;
+        });    
+
+    })
+
+    $(document).ready(function(){
+       
+            $("#startdate").datepicker(
+                {
+                    showOn: "button",
+                    buttonImage: "images/calendar.png",
+                    buttonImageOnly: true,
+                    buttonText: "Select date",
+                    showButtonPanel: true,    // option hiển thị nút "Today", "Done"
+                    dateFormat: 'dd-mm-yy'    // option Định dạng format ngày tháng; d: Day Ngày; m: Month tháng; y: Year năm
+                }     
+                );
+
+                $("#enddate").datepicker(
+                {
+                    showOn: "button",
+                    buttonImage:"images/calendar.png",
+                    buttonImageOnly: true,
+                    buttonText: "Chọn ngày",
+                    showButtonPanel: true,    // option hiển thị nút "Today", "Done"
+                    dateFormat: 'dd-mm-yy'    // option Định dạng format ngày tháng; d: Day Ngày; m: Month tháng; y: Year năm
+                }     
+              );
+              $("img.ui-datepicker-trigger").attr('src','images/calendar.png');
+
+               
+
+    })
+
+    
+
+</script>
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="tieude">
+        <p>My News</p> 
+        <i class="fas fa-search" style="font-size: 30px;" data-toggle="modal" data-target="#myModal"  ></i>      
+    </div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        
+        <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="row">
+                <div class="col-md-12">
+                   
+                    <label for="">Tìm kiếm với từ khóa </label> <br>
+                </div>
+                <div class="col-md-12">
+                    <input type="text" id="timkeyword" placeholder="Nhập từ khóa...">
+                </div>
+            </div>
+            
+        <div>
+            <div id="sortbytime">
+                <div class="inputkeyword row">
+                    <div class="strlabel  col-xs-12 col-md-4" id="str1">
+                        <label for="" >Từ ngày</label>
+                    </div>
+                    <div class="strdate  col-xs-12 col-md-8">
+                        <input type="text" id="startdate">
+                    </div>
+                                              
+                </div>
+                <div class="inputkeyword row">
+                    <div class="strlable  col-xs-12 col-md-4" id="str2">
+                        <label for="" >Đên ngày</label>
+                    </div>
+                    <div class="strdate  col-xs-12 col-md-8">
+                        <input type="text" id="enddate">              
+                    </div>                                                 
+                </div>
+            </div>
+        </div>
+            <div class="row text-center">
+                <button id="timkiem" class="btn btn-default" data-dismiss="modal">Search</button>	 
+            </div>
+         
+        
+         
+        </div>
+       
+      </div>
+      
+    </div>
+  </div>
+
+    <div id=loading>
+        <div class="load"><div></div><div></div><div></div><div></div></div>
+    </div>
+
+
+</div>
+
+
+ 
+</body>
+</html>

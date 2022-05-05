@@ -1,0 +1,12 @@
+@media only screen and (max-width:768px){
+    #str1 {
+        text-align: center !important;
+    }
+    #str2 {
+        text-align: center !important;
+    }
+    .strdate{
+        text-align: center !important;
+    }
+   
+}
